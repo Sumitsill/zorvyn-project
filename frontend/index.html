@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Auth View -->
+        <div id="auth-view" class="view active">
+            <div class="glass-card auth-card">
+                <div class="auth-header">
+                    <h2>Welcome to Finance<br><span class="accent">Dashboard</span></h2>
+                    <p>Sign in to continue</p>
+                </div>
+                <form id="login-form">
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" id="email" required placeholder="admin@example.com">
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="password" required placeholder="••••••••">
+                    </div>
+                    <div class="error-msg" id="login-error"></div>
+                    <button type="submit" class="primary-btn">Sign In</button>
+                    <div class="test-creds">
+                        <small>Test role accounts: admin / analyst / viewer</small><br>
+                        <small>Passwords: {role}123</small>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard View -->
+        <div id="main-view" class="view">
+            <nav class="sidebar glass-card">
+                <div class="brand">
+                    <h2>Finance<span class="accent">Dash</span></h2>
+                    <div id="user-role-badge" class="role-badge">Admin</div>
+                </div>
+                <ul class="nav-links">
+                    <li class="active" data-target="dashboard-tab">Dashboard</li>
+                    <li data-target="records-tab" id="nav-records" style="display: none;">Financial Records</li>
+                    <li data-target="users-tab" id="nav-users" style="display: none;">User Management</li>
+                </ul>
+                <div class="nav-footer">
+                    <button id="logout-btn" class="secondary-btn">Sign Out</button>
+                </div>
+            </nav>
+
+            <main class="content">
+                <header class="topbar">
+                    <h1 id="page-title">Overview</h1>
+                    <div style="display: flex; gap: 12px;">
+                        <button id="new-user-btn" class="primary-btn hidden">+ New User</button>
+                        <button id="new-record-btn" class="primary-btn hidden">+ New Record</button>
+                    </div>
+                </header>
+
+                <div class="tab-content active" id="dashboard-tab">
+                    <div class="summary-cards">
+                        <div class="glass-card stat-card">
+                            <h3>Total Income</h3>
+                            <div class="stat-value text-success" id="stat-income">$0.00</div>
+                        </div>
+                        <div class="glass-card stat-card">
+                            <h3>Total Expenses</h3>
+                            <div class="stat-value text-danger" id="stat-expenses">$0.00</div>
+                        </div>
+                        <div class="glass-card stat-card">
+                            <h3>Net Balance</h3>
+                            <div class="stat-value" id="stat-balance">$0.00</div>
+                        </div>
+                    </div>
+                    <div class="charts-row" style="display: flex; gap: 24px; flex-wrap: wrap; align-items: stretch;">
+                        <div class="glass-card stat-card chart-container" style="flex: 1; min-width: 300px; display: flex; flex-direction: column; align-items: center;">
+                            <h3>Expenses by Category</h3>
+                            <div style="position: relative; width: 100%; max-width: 250px; flex-grow: 1;">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="glass-card recent-activity" style="flex: 2; min-width: 300px;">
+                            <h3>Recent Activity</h3>
+                            <ul id="recent-activity-list" class="activity-list"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="records-tab">
+                    <div class="glass-card records-card">
+                        <table class="records-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Category</th>
+                                    <th>Description</th>
+                                    <th>Amount</th>
+                                    <th>Type</th>
+                                    <th class="actions-header hidden">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="records-tbody">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                        <div class="pagination">
+                            <button id="prev-page" class="icon-btn">&larr;</button>
+                            <span id="page-indicator">Page 1</span>
+                            <button id="next-page" class="icon-btn">&rarr;</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="users-tab">
+                    <div class="glass-card records-card">
+                        <table class="records-table">
+                            <thead>
+                                <tr>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Joined</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="users-tbody">
+                                <!-- JS Populated -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="record-modal" class="modal">
+        <div class="modal-content glass-card">
+            <h2 class="modal-title">Create Financial Record</h2>
+            <form id="record-form">
+                <div class="input-group">
+                    <label>Amount</label>
+                    <input type="number" id="rec-amount" required min="0.01" step="0.01" placeholder="100.00">
+                </div>
+                <div class="input-group">
+                    <label>Type</label>
+                    <select id="rec-type" required>
+                        <option value="INCOME">Income</option>
+                        <option value="EXPENSE">Expense</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Category</label>
+                    <input type="text" id="rec-category" required placeholder="e.g. Salary">
+                </div>
+                <div class="input-group">
+                    <label>Date</label>
+                    <input type="date" id="rec-date" required>
+                </div>
+                <div class="input-group">
+                    <label>Description</label>
+                    <input type="text" id="rec-desc" placeholder="Optional notes...">
+                </div>
+                <div class="error-msg" id="rec-error"></div>
+                <div class="modal-actions">
+                    <button type="button" id="close-modal" class="secondary-btn">Cancel</button>
+                    <button type="submit" class="primary-btn">Save Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
